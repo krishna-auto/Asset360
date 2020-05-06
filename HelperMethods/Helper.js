@@ -45,9 +45,20 @@ let helpermethods = function(){
     this.verifydropdownValues = function(list){
         list.forEach(function(value) {
             console.log(value);
-            verifyElementDisplayed(element(by.xpath("//span[@class='mat-option-text' and contains(text(),'Daily')]")),true);
+            verifyElementDisplayed(element(by.xpath("//span[@class='mat-option-text' and contains(text(),'"+value+"')]")),true);
         },this);     
     }
+    //verify selected dropdown values
+    this.verifyselectedDDvalue = function(label,value){
+        console.log(label);
+        console.log(value);
+        verifyElementDisplayed(element(by.xpath("//label[contains(text(),'"+label+"')]/parent::div//div[@class='mat-select-value']//span[text()='"+value+"']")),true)
+    }
+    //verify dropdown icon for corresponding label
+    this.verifydropdownIcon = function(label){
+        verifyElementDisplayed(element(by.xpath("//label[contains(text(),'"+label+"')]/parent::div/div//div[@class='mat-select-arrow-wrapper']")),true);
+    }
+    
     function verifyElementDisplayed(element,expectedstatus){
         var actualstatus  = element.isPresent();
         expect(expectedstatus).toBe(actualstatus);

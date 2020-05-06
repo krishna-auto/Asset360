@@ -8,8 +8,10 @@ let accountPage = function(){
     let overduestasks_toggle = element(by.xpath("//label[contains(text(),'Number of overdue tasks')]//ancestor::div[contains(@class,'col')]//input"));
     let pendingtasks_toggle = element(by.xpath("//label[contains(text(),'Number of pending tasks')]//ancestor::div[contains(@class,'col')]//input"));
     let sendasummary_dropdown = element(by.xpath("//label[contains(text(),'SEND A SUMMARY EMAIL')]/parent::div//div[@class='mat-select-value']"));
+    let week_dropdown = element(by.xpath("//label[contains(text(),'DAY OF THE WEEK')]/parent::div//div[@class='mat-select-value']"));
     let timeofaday_dropdown = element(by.xpath("//label[contains(text(),'TIME OF THE DAY')]/parent::div//div[@class='mat-select-value']"));
-    
+    let close_button = element(by.xpath("//button//div[contains(text(),'Close')]"));
+    let apply_button = element(by.xpath("//button//div[contains(text(),'Apply')]"));
     //verify header and intro text
     this.verifyHeaderIntroText = function(){
         helper.verifyElement(notifications_header,true);
@@ -26,11 +28,30 @@ let accountPage = function(){
         helper.verifyElement(sendasummary_dropdown,true);
         helper.verifyElement(timeofaday_dropdown,true);
     }
-    
+    this.verifyselecteddropdownvalue = function(label,value){
+        helper.verifyselectedDDvalue(label.toUpperCase(),value);
+        helper.verifydropdownIcon(label.toUpperCase());
+    }
+
     //verify revert & apply buttons
     this.VerifyRevertApply = function(){
         VerifyButtons('Revert');
         VerifyButtons('Apply');
+    }
+    this.VerifyCloseButton = function(){
+        helper.verifyElement(close_button,true);
+    }
+    
+    this.clickButton = function(buttonname){
+        switch(buttonname.toUpperCase()){
+        case "CLOSE":
+                helper.clickElement(close_button);
+                break;
+        case "APPLY":
+                helper.clickElement(apply_button);
+                break;
+        
+        }
     }
     this.ToggleSwitch = function(){
         helper.clickElement(element(by.xpath("//label[contains(text(),'Email Notifications')]//ancestor::div[@class='col1']//input")));
@@ -59,23 +80,41 @@ let accountPage = function(){
         helper.verifyElement(element(by.xpath("//label[contains(text(),'"+labelname+"')]")),true);   
     }
     function VerifyButtons(buttonname){
-        helper.verifyElement(element(by.xpath("//button/span[contains(text(),'"+labelname+"')]")),true);   
+        helper.verifyElement(element(by.xpath("//button//div[contains(text(),'"+buttonname+"')]")),true);   
     }
 
-    this.clickdrop = function(){
-        helper.clickElement(sendasummary_dropdown);
-        browser.sleep(6000);
+    this.clickdrop = function(label){
+        if(label == 'summary')
+            helper.clickElement(sendasummary_dropdown);
+        else if(label == 'week')
+            helper.clickElement(week_dropdown);
+        else
+            helper.clickElement(timeofaday_dropdown);
+       }
+    //verify dropdown values
+    this.verifyDropdownValues = function(label){
+        const summarydropdownvalues = [ 'Daily','Weekly', 'Never'];
+        const dayofweekvalues = ['Sunday','Wednesday','Saturday'];
+        const timedropdownvalues = ['12:00 AM','01:00 AM','02:00 AM','09:00 AM','10:00 PM'];
+        if(label == "summary")
+            helper.verifydropdownValues(summarydropdownvalues);
+        else if(label == "week")
+            helper.verifydropdownValues(dayofweekvalues);
+        else
+            helper.verifydropdownValues(timedropdownvalues);
+        
+        $('body').sendKeys(protractor.Key.ESCAPE);
+        //summarydropdownvalues.sendKeys(protractor.Key.ESCAPE);
         
     }
-    //verify dropdown values
-    this.verifyDropdownValues = function(){
-        const dropdownvalues = [ 'Daily','Weekly', 'Never'];
+    this.selectddvalue = function(value,label){
+        if(label == 'summary')
+            helper.clickElement(sendasummary_dropdown);
+        else if(label == 'time')
+            helper.clickElement(timeofaday_dropdown);
         
-        helper.verifydropdownValues(dropdownvalues);
-        }
-            //return true; 
-     
-    
+        helper.clickElement(element(by.xpath("//span[@class='mat-option-text' and contains(text(),'"+value+"')]")));
+    }
 }
 
 module.exports = new accountPage();
